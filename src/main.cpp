@@ -25,7 +25,7 @@ void loop(){
   digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
   analogWrite(11, 255);    //Spins the motor on Channel B at half speed
-
+  Serial.println("I'm driving forward at full speed!");
   delay(1000);
 
   
@@ -45,7 +45,7 @@ void loop(){
   digitalWrite(13, LOW); //Establishes reverse direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
   analogWrite(11, 255);   //Spins the motor on Channel B at full speed
-  
+  Serial.println("I'm driving backwards at full speed!");
   
   delay(1000);
   
@@ -66,7 +66,7 @@ void loop(){
   digitalWrite(13, LOW); //Establishes reverse direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
   analogWrite(11, 127);   //Spins the motor on Channel B at half speed
-  
+  Serial.println("I'm turning at half speed! Left or right i don't know yet ;.(");
   delay(1000);
 
   digitalWrite(9, HIGH);  //Engage the Brake for Channel A
@@ -84,7 +84,7 @@ void loop(){
   digitalWrite(13, HIGH); //Establishes reverse direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
   analogWrite(11, 127);   //Spins the motor on Channel B at half speed
-  
+  Serial.println("I'm turning at half speed! Left or right i don't know yet ;.(");
   delay(1000);
 
   digitalWrite(9, HIGH);  //Engage the Brake for Channel A
