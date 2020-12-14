@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Besturing.cpp>
 
 void setup() {
   
@@ -14,7 +15,8 @@ void setup() {
 }
 
 void loop(){
-
+  
+  recht();    //zie besturing.cpp voor uitleg
   //Driving forward
   //Motor A forward @ full speed
   digitalWrite(12, HIGH); //Establishes forward direction of Channel A
@@ -55,17 +57,17 @@ void loop(){
   
   
   delay(1000);
-
+  linksSlap();    //zie besturing.cpp voor uitleg
   //Turning left or right idk
   //Motor A forward @ half speed
   digitalWrite(12, HIGH); //Establishes forward direction of Channel A
   digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-  analogWrite(3, 127);   //Spins the motor on Channel A at full speed
+  analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
   //Motor B reverse @ half speed
   digitalWrite(13, LOW); //Establishes reverse direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-  analogWrite(11, 127);   //Spins the motor on Channel B at half speed
+  analogWrite(11, 255);   //Spins the motor on Channel B at half speed
   Serial.println("I'm turning at half speed! Left or right i don't know yet ;.(");
   delay(1000);
 
@@ -78,12 +80,12 @@ void loop(){
   //Motor A forward @ half speed
   digitalWrite(12, LOW); //Establishes reverse direction of Channel A
   digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-  analogWrite(3, 127);   //Spins the motor on Channel A at full speed
+  analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
   //Motor B reverse @ half speed
   digitalWrite(13, HIGH); //Establishes reverse direction of Channel B
   digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-  analogWrite(11, 127);   //Spins the motor on Channel B at half speed
+  analogWrite(11, 255);   //Spins the motor on Channel B at half speed
   Serial.println("I'm turning at half speed! Left or right i don't know yet ;.(");
   delay(1000);
 
