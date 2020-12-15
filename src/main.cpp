@@ -147,7 +147,7 @@ void loop(){
         digitalWrite(8, HIGH);  //Engage the Brake for Channel B
         straight();
         delay(delayR);
-       loop();
+       loop(); //sup fucke
   }
 
   //Rechts slap
