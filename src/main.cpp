@@ -1,5 +1,15 @@
 #include <Arduino.h>
 
+// Variables will change:
+int ledState = HIGH;         // the current state of the output pin
+int buttonState;             // the current reading from the input pin
+int lastButtonState = LOW;   // the previous reading from the input pin
+
+// the following variables are unsigned longs because the time, measured in
+// milliseconds, will quickly become a bigger number than can be stored in an int.
+unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
+unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+
 #define DS1 22
 #define DS2 24
 #define DS3 26
@@ -67,6 +77,8 @@ void pause() {
 
 void setup() {
   
+
+  
   //Setup Channel A
   pinMode(12, OUTPUT); //Initiates Motor Channel A pin
   pinMode(9, OUTPUT); //Initiates Brake Channel A pin
@@ -87,6 +99,38 @@ void setup() {
 }
 
 void loop(){
+
+// assigns signal 1-6 from digital sensor 1-6
+  
+  int digitalstate[] = {DS1, DS2, DS3, DS4, DS5, DS6};
+  // read the state of the switch into a local variable:
+  int reading = digitalRead(digitalstate[0, 1, 2, 3, 4, 5]);
+ 
+  // check to see if you just pressed the button
+  // (i.e. the input went from LOW to HIGH), and you've waited long enough
+  // since the last press to ignore any noise:
+
+  // If the switch changed, due to noise or pressing:
+  if (reading != lastButtonState) {
+    // reset the debouncing timer
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // whatever the reading is at, it's been there for longer than the debounce
+    // delay, so take it as the actual current state:
+
+    // if the button state has changed:
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      // only toggle the LED if the new button state is HIGH
+      if (buttonState == HIGH) {
+        ledState = !ledState;
+      }
+    }
+  }
+
   // assigns signal 1-6 from digital sensor 1-6
   int s1 = digitalRead(DS1);
   int s2 = digitalRead(DS2);
@@ -94,6 +138,8 @@ void loop(){
   int s4 = digitalRead(DS4);
   int s5 = digitalRead(DS5);
   int s6 = digitalRead(DS6);
+  
+
   
   //Straight line driving
   if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh)){
@@ -131,7 +177,15 @@ void loop(){
 
 
   //Rechts haaks
-  
+  if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s6 == bl)){
+    if(s6 == wh){
+       digitalWrite(9, HIGH);  //Engage the Brake for Channel A
+       digitalWrite(8, HIGH);  //Engage the Brake for Channel B
+       right();                //The car go right
+       delay(delayR);
+       loop();                 //Runs the void loop again
+    }
+  }
 
   
 
