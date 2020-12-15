@@ -17,6 +17,8 @@ unsigned long debounceDelay = 50;    // the debounce time; increase if the outpu
 #define DS5 30
 #define DS6 32
 
+//hoi
+
 int delayR = 50;
 int bl = 1;
 int wh = 0;
