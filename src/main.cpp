@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 // Variables will change:
-int ledState = HIGH;         // the current state of the output pin
+int ledState = HIGH;         // the current state of the output pi
 int buttonState;             // the current reading from the input pin
 int lastButtonState = LOW;   // the previous reading from the input pin
 
