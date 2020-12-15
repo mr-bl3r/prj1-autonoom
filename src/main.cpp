@@ -75,7 +75,49 @@ void pause() {
 
 }
 
+void debounce(){
+  // assigns signal 1-6 from digital sensor 1-6
+  
+   int digitalstate[] = {DS1, DS2, DS3, DS4, DS5, DS6};
+  // read the state of the switch into a local variable:
+  for(int i = 0; i<=5; i++)
+  {
+   
+   int reading = digitalRead(digitalstate[i]);
 
+ 
+  // check to see if you just pressed the button
+  // (i.e. the input went from LOW to HIGH), and you've waited long enough
+  // since the last press to ignore any noise:
+
+  // If the switch changed, due to noise or pressing:
+  if (reading != lastButtonState) {
+    // reset the debouncing timer
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // whatever the reading is at, it's been there for longer than the debounce
+    // delay, so take it as the actual current state:
+
+    // if the button state has changed:
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      // only toggle the LED if the new button state is HIGH
+      if (buttonState == HIGH) {
+        ledState = !ledState;
+      }
+    }
+  }
+  
+  // set the LED:
+  digitalWrite(digitalstate[i], ledState);
+
+  // save the reading. Next time through the loop, it'll be the lastButtonState:
+  lastButtonState = reading;
+ }
+}
 
 void setup() {
   
@@ -102,36 +144,7 @@ void setup() {
 
 void loop(){
 
-// assigns signal 1-6 from digital sensor 1-6
-  
-  int digitalstate[] = {DS1, DS2, DS3, DS4, DS5, DS6};
-  // read the state of the switch into a local variable:
-  int reading = digitalRead(digitalstate[0, 1, 2, 3, 4, 5]);
- 
-  // check to see if you just pressed the button
-  // (i.e. the input went from LOW to HIGH), and you've waited long enough
-  // since the last press to ignore any noise:
-
-  // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
-    // reset the debouncing timer
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-
-      // only toggle the LED if the new button state is HIGH
-      if (buttonState == HIGH) {
-        ledState = !ledState;
-      }
-    }
-  }
+ debounce();
 
   // assigns signal 1-6 from digital sensor 1-6
   int s1 = digitalRead(DS1);
