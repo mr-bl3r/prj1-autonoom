@@ -144,7 +144,7 @@ void loop(){
   //Straight line driving
   if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh)){
         digitalWrite(9, HIGH);  //Engage the Brake for Channel A
-        digitalWrite(8, HIGH);  //Engage the Brake for Channel B
+        digitalWrite(8, HIGH);  //Engage the Brake r Channel B
         straight();
         delay(delayR);
        loop(); //sup fucke
