@@ -73,7 +73,7 @@ void left() {
     analogWrite(11, 255);    //Spins the motor on Channel B at full speed forward
     
 
-}
+} /*
 void reverse() {
   digitalWrite(12, LOW);
   digitalWrite(13, LOW);
@@ -84,7 +84,7 @@ void stop() {
   digitalWrite(9, HIGH);
   digitalWrite(8, HIGH);
 }
-
+ */
 void pause() {
   Serial.println("start pauze"); 
 
@@ -134,6 +134,8 @@ void pause() {
  }
 }
 */
+
+
 void setup() {
   
 
@@ -167,6 +169,8 @@ void loop(){
   int s4 = digitalRead(DS4);
   int s5 = digitalRead(DS5);
   int s6 = digitalRead(DS6);
+  
+  int arry[6] ={s1,s2,s3,s4,s5,s6};
   
   Serial.println(s6);
 
