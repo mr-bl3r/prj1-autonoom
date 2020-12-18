@@ -76,9 +76,13 @@ void left() {
 }
 void reverse() {
   digitalWrite(12, LOW);
-digitalWrite(13, LOW);
+  digitalWrite(13, LOW);
   digitalWrite(9, LOW);
   digitalWrite(8, LOW);
+}
+void stop() {
+  digitalWrite(9, HIGH);
+  digitalWrite(8, HIGH);
 }
 
 void pause() {
@@ -171,7 +175,11 @@ void loop(){
   if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh) && (s6 == bl)){
         straight();
         delay(delayR);
-       loop(); //sup fucker mannen
+       return;
+  }
+  else if ((s1 == bl) && (s2 == bl) && (s3 == bl) && (s4 == bl) && (s5 == bl) && (s6 == bl)){
+    delay(1000);
+    return;
   }
 
   /*
