@@ -6,7 +6,7 @@ int buttonState;             // the current reading from the input pin
 int lastButtonState = LOW;   // the previous reading from the input pin
 int rechtsom = 0;
 int linksom = 0;
-
+int rechtscor = 0;
  
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
@@ -27,7 +27,7 @@ int bl = 1;
 int wh = 0;
 
 int s1, s2, s3, s4, s5, s6;
-int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
+int ls1, ls2, ls3, ls4, ls5, ls6;
 
 void straight() {
   Serial.println("Driving straight");
@@ -186,7 +186,8 @@ void loop(){
   int s4 = digitalRead(DS4);
   int s5 = digitalRead(DS5);
   int s6 = digitalRead(DS6);
-  
+
+  Serial.print("eerste");
   Serial.print(s4);
   Serial.print("  ");
   Serial.print(s2);
@@ -198,6 +199,77 @@ void loop(){
   Serial.print(s5);
   Serial.println(" ");
   Serial.println(s6);
+  
+  delay(10);
+
+  int ls1 = digitalRead(DS1);
+  int ls2 = digitalRead(DS2);
+  int ls3 = digitalRead(DS3);
+  int ls4 = digitalRead(DS4);
+  int ls5 = digitalRead(DS5);
+  int ls6 = digitalRead(DS6);
+
+  Serial.print("tweede");
+  Serial.print(ls4);
+  Serial.print(" ");
+  Serial.print(ls2);
+  Serial.print(" ");
+  Serial.print(ls1);
+  Serial.print(" ");
+  Serial.print(ls3);
+  Serial.print(" ");
+  Serial.print(ls5);
+  Serial.println(" ");
+  Serial.println(ls6);
+
+
+
+  int tot1 = s1 + ls1;
+
+  if(tot1 >= 1){
+    tot1 = 1; 
+  }
+  int tot2 = s2 + ls2;
+
+  if(tot2 >= 1){
+    tot2 = 1; 
+  }
+  int tot3 = s3 + ls3;
+
+  if(tot3 >= 1){
+    tot3 = 1; 
+  }
+  int tot4 = s4 + ls4; 
+
+  if(tot4 >= 1){
+    tot4 = 1; 
+  }
+  int tot5 = s5 + ls5;
+
+  if(tot5 >= 1){
+    tot5 = 1; 
+  }
+  int tot6 = s6 + ls6; 
+
+  if(tot6 >= 1){
+    tot6 = 1; 
+  }
+
+  Serial.print("tot");
+  Serial.print(tot4);
+  Serial.print("  ");
+  Serial.print(tot2);
+  Serial.print("  ");
+  Serial.print(tot1);
+  Serial.print("  ");
+  Serial.print(tot3);
+  Serial.print("  ");
+  Serial.print(tot5);
+  Serial.println(" ");
+  Serial.println(tot6);
+
+
+ 
   //int arry[6] ={s1,s2,s3,s4,s5,s6};
   
   //Serial.println(s6);
@@ -207,17 +279,56 @@ void loop(){
   }
 */
  //Straight line driving
-  if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh) && (s6 == bl)){
-        straight();
-        delay(delayR);
+  if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+    straight();
+    delay(delayR);
        return;
+      }
+      
+
+
+ 
+ 
+  if((s1 == bl) || (s6 == bl)){
+    CheckLineCoordination();
   }
-  else if ((s1 == bl) && (s2 == bl) && (s3 == bl) && (s4 == bl) && (s5 == bl) && (s6 == bl)){
-    digitalWrite(9, HIGH);
-    digitalWrite(8, HIGH);
-    delay(1000);
-    return;
+
+ //Straight line driving
+  if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+    
+     straight();
+     delay(delayR);
+       return;
+      }
+      
+
+
+ 
+ 
+ /* if((s1 == bl) || (s6 == bl)){
+    CheckLineCoordination();
   }
+*/
+ //Straight line driving
+  if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+    
+     straight();
+     delay(delayR);
+       return;
+      }
+      
+
+
+ 
+ 
+  
+  
+  
+  
+  
+  
+  
+  
 
   /*
   //Rechts slap
@@ -262,7 +373,7 @@ void loop(){
     
   }
    */
-
+//Rechts haaks
 if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
       rechtsom = 123;
   Serial.println("s1 s3 s5 zien zwart");
@@ -279,8 +390,19 @@ if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
          loop();                    //Runs the void loop again
          
 }
-
-if((s1 == bl) && (s2 == bl) && (s4 == bl) && (s3 == wh) && (s5 == wh)){
+ /* if((s3 == bl) && (s2 == wh) && (s4 == wh)){
+    rechtscor = 36;
+  }//links haaks
+ if((s5 == bl) && (rechtscor == 36) && (s2 == wh) && (s4 == wh)){
+     analogWrite(11, 255);   //Spins the motor on Channel B at full speed
+     analogWrite(3, 255);    //Spins the motor on Channel A at full speed
+   }
+   else
+   {
+    
+    } */
+   
+  if ((s1 == bl) && (s2 == bl) && (s4 == bl) && (s3 == wh) && (s5 == wh)){
     linksom = 124;
     Serial.println("s1 s2 s4 zien zwart");
     Serial.println(s6);
