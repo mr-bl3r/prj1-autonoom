@@ -5,10 +5,13 @@ int ledState = HIGH;         // the current state of the output pi
 int buttonState;             // the current reading from the input pin
 int lastButtonState = LOW;   // the previous reading from the input pin
 
+
+
+ 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 20;    // the debounce time; increase if the output flickers
+unsigned long debounceDelay = 0;    // the debounce time; increase if the output flickers
 
 #define DS1 22
 #define DS2 24
@@ -17,12 +20,13 @@ unsigned long debounceDelay = 20;    // the debounce time; increase if the outpu
 #define DS5 30
 #define DS6 32
 
-//hoi
+
 
 int delayR = 50;
 int bl = 1;
 int wh = 0;
 
+int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
 
 void straight() {
   Serial.println("Driving straight");
@@ -43,39 +47,46 @@ void right() {
   Serial.println("Gaat naar rechts");
   //Driving right
   //Motor A forward @ full speed forward
-    digitalWrite(12, HIGH); //Establishes forward direction of Channel A
+    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
   //Motor B forward @ full speed backward
-    digitalWrite(13, LOW);  //Establishes backward direction of Channel B
+    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     analogWrite(11, 255);    //Spins the motor on Channel B at full speed backward
     
 }
 
+
 void left() {
   Serial.println("Gaat naar links");
   //Driving left
   //Motor A forward @ full speed backward
-    digitalWrite(12, LOW); //Establishes backward direction of Channel A
+    digitalWrite(12, HIGH); //Establishes  direction of Channel A
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     analogWrite(3, 255);   //Spins the motor on Channel A at full speed backward
 
   //Motor B forward @ full speed forward
-    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+    digitalWrite(13, LOW);  //Establishes forward direction of Channel B
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     analogWrite(11, 255);    //Spins the motor on Channel B at full speed forward
     
 
+}
+void reverse() {
+  digitalWrite(12, LOW);
+digitalWrite(13, LOW);
+  digitalWrite(9, LOW);
+  digitalWrite(8, LOW);
 }
 
 void pause() {
   Serial.println("start pauze"); 
 
 }
-
-void debounce(){
+/*
+ void debounce(){
   // assigns signal 1-6 from digital sensor 1-6
   
    int digitalstate[] = {DS1, DS2, DS3, DS4, DS5, DS6};
@@ -118,7 +129,7 @@ void debounce(){
   lastButtonState = reading;
  }
 }
-
+*/
 void setup() {
   
 
@@ -144,8 +155,7 @@ void setup() {
 
 void loop(){
 
- debounce();
-
+  //debounce();
   // assigns signal 1-6 from digital sensor 1-6
   int s1 = digitalRead(DS1);
   int s2 = digitalRead(DS2);
@@ -154,19 +164,19 @@ void loop(){
   int s5 = digitalRead(DS5);
   int s6 = digitalRead(DS6);
   
+  Serial.println(s6);
 
-  
-  //Straight line driving
-  if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh)){
-        digitalWrite(9, HIGH);  //Engage the Brake for Channel A
-        digitalWrite(8, HIGH);  //Engage the Brake r Channel B
+
+ //Straight line driving
+  if ((s1 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh) && (s5 == wh) && (s6 == bl)){
         straight();
         delay(delayR);
        loop(); //sup fucker mannen
   }
 
+  /*
   //Rechts slap
-  if ((s1 == bl) && (s6 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh)){
+   if ((s1 == bl) && (s6 == bl) && (s2 == wh) && (s3 == wh) && (s4 == wh)){
     if (s5 == bl){
       if (s6 == wh){
         digitalWrite(9, HIGH);  //Engage the Brake for Channel A
@@ -177,8 +187,8 @@ void loop(){
     }
    }
   }
-
-  //Rechts scherp
+  
+   //Rechts scherp
   if ((s1 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
     if (s3 == bl){
       if (s6 == wh){
@@ -189,22 +199,41 @@ void loop(){
       }
     }
   }
+ */
 
-
-  //Rechts haaks
-  if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s6 == bl)){
-    if(s6 == wh){
-       digitalWrite(9, HIGH);  //Engage the Brake for Channel A
-       digitalWrite(8, HIGH);  //Engage the Brake for Channel B
-       right();                //The car go right
-       delay(delayR);
-       loop();                 //Runs the void loop again
-    }
+ /* //Rechts haaks
+   if((s1 == bl) && (s3 == bl) && (s5 == bl)){
+      Serial.println("De auto ziet de sensor 1, 3 en 5");
+      Serial.println(s6);
+        if((s6 == wh)){ 
+          Serial.println(s6);
+          Serial.println("gaat hij naar rechts!!");
+          digitalWrite(9, HIGH);  //Engage the Brake for Channel A
+          digitalWrite(8, HIGH);  //Engage the Brake for Channel B
+          right();                //The car go right
+         delay(delayR);
+         loop();                    //Runs the void loop again
+        }
+    
   }
+   */
+int rechtsom = 0;
+if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
+      rechtsom = 123;
+  Serial.println("s1 s3 s5 zien zwart");
+  Serial.println(s6);
 
-  
+  }
+  if ((rechtsom = 123) && (s6 == wh)){
+         Serial.println("moet nu draaien");
+         Serial.println(s6);
+         right();
+         rechtsom = 0;                //The car go right
+         loop();                    //Runs the void loop again
+         
+}
 
-
+/*
 
  
 
@@ -288,5 +317,5 @@ void loop(){
   digitalWrite(8, HIGH);  //Engage the Brake for Channel B
 
   delay(1000);
-
+*/
 }
