@@ -7,7 +7,11 @@ int lastButtonState = LOW;   // the previous reading from the input pin
 int rechtsom = 0;
 int linksom = 0;
 int rechtscor = 0;
- 
+int linkscor = 0;
+int linkscorscherp = 0; 
+int rechtscorscherp = 0;
+
+
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
@@ -32,12 +36,12 @@ int ls1, ls2, ls3, ls4, ls5, ls6;
 void straight() {
   Serial.println("Driving straight");
   //Driving forward
-  //Motor A forward @ full speed
+  //Motor A (rechterkant )forward @ full speed
     digitalWrite(12, HIGH); //Establishes forward direction of Channel A
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
-  //Motor B forward @ full speed
+  //Motor B (linkerkant) forward @ full speed
     digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     analogWrite(11, 255);    //Spins the motor on Channel B at full speed
@@ -51,11 +55,11 @@ void right() {
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     digitalWrite(12, LOW); //Establishes reverse direction of Channel A
     analogWrite(3, 255);   //Spins the motor on Channel A at full speed
-
+   
   //Motor B forward @ full speed backward
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    analogWrite(11, 255);    //Spins the motor on Channel B at full speed backward
+    analogWrite(11, 127);    //Spins the motor on Channel B at full speed backward
     
 }
 
@@ -77,7 +81,7 @@ void left() {
 
 } 
 
-void CheckLineCoordination(){
+ void CheckLineCoordination(){
     if ((s1 != bl) && (s2 == bl))
     {
     digitalWrite(12, HIGH); //Establishes  direction of Channel A
@@ -90,67 +94,18 @@ void CheckLineCoordination(){
     analogWrite(11, 200);     //Spins the motor on Channel B at full speed forward
 
     }
-    } /*
-void reverse() {
-  digitalWrite(12, LOW);
-  digitalWrite(13, LOW);
-  digitalWrite(9, LOW);
-  digitalWrite(8, LOW);
-}
+    } 
+
 void stop() {
   digitalWrite(9, HIGH);
   digitalWrite(8, HIGH);
 }
- */
+ 
 void pause() { 
   Serial.println("start pauze"); 
 
 }
-/*
- void debounce(){
-  // assigns signal 1-6 from digital sensor 1-6
-  
-   int digitalstate[] = {DS1, DS2, DS3, DS4, DS5, DS6};
-  // read the state of the switch into a local variable:
-  for(int i = 0; i<=5; i++)
-  {
-   
-   int reading = digitalRead(digitalstate[i]);
 
- 
-  // check to see if you just pressed the button
-  // (i.e. the input went from LOW to HIGH), and you've waited long enough
-  // since the last press to ignore any noise:
-
-  // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
-    // reset the debouncing timer
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-
-      // only toggle the LED if the new button state is HIGH
-      if (buttonState == HIGH) {
-        ledState = !ledState;
-      }
-    }
-  }
-  
-  // set the LED:
-  digitalWrite(digitalstate[i], ledState);
-
-  // save the reading. Next time through the loop, it'll be the lastButtonState:
-  lastButtonState = reading;
- }
-}
-*/
 
 
 void setup() {
@@ -270,7 +225,6 @@ void loop(){
 
 
  
-  //int arry[6] ={s1,s2,s3,s4,s5,s6};
   
   //Serial.println(s6);
 /*
@@ -284,50 +238,9 @@ void loop(){
     delay(delayR);
        return;
       }
-      
 
 
- 
- 
-  if((s1 == bl) || (s6 == bl)){
-    CheckLineCoordination();
-  }
 
- //Straight line driving
-  if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
-    
-     straight();
-     delay(delayR);
-       return;
-      }
-      
-
-
- 
- 
- /* if((s1 == bl) || (s6 == bl)){
-    CheckLineCoordination();
-  }
-*/
- //Straight line driving
-  if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
-    
-     straight();
-     delay(delayR);
-       return;
-      }
-      
-
-
- 
- 
-  
-  
-  
-  
-  
-  
-  
   
 
   /*
@@ -374,46 +287,119 @@ void loop(){
   }
    */
 //Rechts haaks
-if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
+if((tot1 == bl) && (tot3 == bl) && (tot5 == bl) && (tot2 == wh) && (tot4 == wh)){
       rechtsom = 123;
   Serial.println("s1 s3 s5 zien zwart");
   Serial.println(s6);
 
   }
-  if ((rechtsom == 123) && (s6 == wh)){
+  if ((rechtsom == 123) && (tot6 == wh)){
          Serial.println("moet nu draaien rechts");
          //Serial.println(s6);
-         digitalWrite(8, HIGH);   //Disengage the Brake for Channel B
-         digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
+         //digitalWrite(8, HIGH);   //Disengage the Brake for Channel B
+         //digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
          right();
-         rechtsom = 0;                //The car go right
-         loop();                    //Runs the void loop again
+          rechtsom = 0;              //The car go right
+         if(tot1 == bl){
+           Serial.println("na de bocht recht door");
+           return;
+        
+         }
          
 }
- /* if((s3 == bl) && (s2 == wh) && (s4 == wh)){
+
+
+//correctie naar de lijn naar rechts
+ if((tot3 == bl) && (tot2 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+    Serial.println("gaat naar rechts?");
     rechtscor = 36;
-  }//links haaks
- if((s5 == bl) && (rechtscor == 36) && (s2 == wh) && (s4 == wh)){
+    delay(20);
+  }
+  
+  if((tot3 == bl) && (rechtscor == 36) && (tot2 == wh) && (tot4 == wh)){
+     Serial.println("rechtse correctie");
      analogWrite(11, 255);   //Spins the motor on Channel B at full speed
-     analogWrite(3, 255);    //Spins the motor on Channel A at full speed
-   }
-   else
-   {
+     analogWrite(3, 80);    //Spins the motor on Channel A at full speed
+    if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
+     Serial.println("Heeft nu gecorrigeerd van rechts");
+    return;
+    }
+  }
     
-    } */
+    
+    //slappe correctie naar links
+    if((tot3 == wh) && (tot2 == bl) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+      Serial.println("gaat naar links?");
+      linkscor = 37;
+      delay(20);
+    }
+    if((tot2 == bl) && (linkscor == 37) && (tot3 == wh) && (tot5 == wh)){
+      Serial.println("linkse correctie");
+      analogWrite(11, 80);   //Spins the motor on Channel B at full speed
+      analogWrite(3, 255);    //Spins the motor on Channel A at full speed
+      
+    if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
+      Serial.println("Heeft nu gecorrigeerd van links");
+      return;
+     }
+    }
+    /*
+    }
+  //scherpe correctie naar links
+   if((tot3 == wh) && (tot2 == wh) && (tot4 == bl) && (tot5 == wh) && (tot6 == bl)){
+      Serial.println("gaat naar scherp links?");
+      linkscorscherp = 38;
+      delay(20);
+    }
+
+    if((tot3 == bl) && (linkscorscherp == 38) && (tot2 == wh) && (tot4 == wh)){
+       Serial.println("links scherp correctie");
+       analogWrite(11, 60);   //Spins the motor on Channel B at full speed
+       analogWrite(3, 255);    //Spins the motor on Channel A at full speed
+      if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
+       Serial.println("Heeft nu gecorrigeerd van links");
+      return;
+      }
+    }
+  //scherpe correctie naar rechts
+    if((tot3 == wh) && (tot2 == wh) && (tot4 == wh) && (tot5 == bl) && (tot6 == bl)){
+      Serial.println("gaat naar scherp links?");
+      rechtscorscherp = 39;
+      delay(20);
+    }
+
+    if((tot3 == bl) && (rechtscorscherp == 39) && (tot2 == wh) && (tot4 == wh)){
+       Serial.println("links scherp correctie");
+       analogWrite(11, 255);   //Spins the motor on Channel B at full speed
+       analogWrite(3, 60);    //Spins the motor on Channel A at full speed
+      if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
+       Serial.println("Heeft nu gecorrigeerd van links");
+      return;
+      }
+    }
+    */
+
+    
    
-  if ((s1 == bl) && (s2 == bl) && (s4 == bl) && (s3 == wh) && (s5 == wh)){
-    linksom = 124;
-    Serial.println("s1 s2 s4 zien zwart");
-    Serial.println(s6);
+    
+   
+//links haaks
+if((tot1 == bl) && (tot3 == wh) && (tot5 == wh) && (tot2 == bl) && (tot4 == bl)){
+      linksom = 123;
+  Serial.println("s1 s3 s5 zien zwart");
+  Serial.println(s6);
 
   }
-  if ((linksom == 124) && (s6 == wh)){
-        Serial.println("moet nu draaien links");
-        //Serial.println(s6);
-        left();
-        linksom = 0;                //The car go right
-        loop();                   //Runs the void loop again
+  if ((linksom == 123) && (tot6 == wh)){
+         Serial.println("moet nu draaien links");
+         //Serial.println(s6);
+         //digitalWrite(8, HIGH);   //Disengage the Brake for Channel B
+         //digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
+         left();
+         linksom = 0;                //The car go right
+         if((tot1 == bl)){
+           return;
+         }
          
 }
 
@@ -505,3 +491,4 @@ if((s1 == bl) && (s3 == bl) && (s5 == bl) && (s2 == wh) && (s4 == wh)){
   delay(1000);
 */
 }
+ 
