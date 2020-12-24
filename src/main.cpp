@@ -33,6 +33,7 @@ int wh = 0;
 int s1, s2, s3, s4, s5, s6;
 int ls1, ls2, ls3, ls4, ls5, ls6;
 
+
 void straight() {
   Serial.println("Driving straight");
   //Driving forward
@@ -54,13 +55,13 @@ void right() {
   //Motor A forward @ full speed forward
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
-   
+    //analogWrite(3, 255);   //Spins the motor on Channel A at full speed
+    analogWrite(3, 65);
   //Motor B forward @ full speed backward
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    analogWrite(11, 127);    //Spins the motor on Channel B at full speed backward
-    
+    //analogWrite(11, 127);    //Spins the motor on Channel B at full speed backward
+    analogWrite(11, 131);
 }
 
 
@@ -70,13 +71,13 @@ void left() {
   //Motor A forward @ full speed backward
     digitalWrite(12, HIGH); //Establishes  direction of Channel A
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed backward
-
+    //analogWrite(3, 127);   //Spins the motor on Channel A at full speed backward
+    analogWrite(3, 131);
   //Motor B forward @ full speed forward
     digitalWrite(13, LOW);  //Establishes forward direction of Channel B
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
-
+    //analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
+    analogWrite(11, 65);
   
 
 } 
@@ -155,7 +156,6 @@ void loop(){
   Serial.println(" ");
   Serial.println(s6);
   
-  delay(10);
 
   int ls1 = digitalRead(DS1);
   int ls2 = digitalRead(DS2);
@@ -210,6 +210,8 @@ void loop(){
     tot6 = 1; 
   }
 
+  delay(10);
+
   Serial.print("tot");
   Serial.print(tot4);
   Serial.print("  ");
@@ -224,20 +226,14 @@ void loop(){
   Serial.println(tot6);
 
 
- 
-  
-  //Serial.println(s6);
-/*
-  if((s1 == bl) || (s6 == bl)){
-    CheckLineCoordination();
-  }
-*/
  //Straight line driving
   if ((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
     straight();
-    delay(delayR);
        return;
       }
+  
+      
+
 
 
 
@@ -287,6 +283,7 @@ void loop(){
   }
    */
 //Rechts haaks
+/*
 if((tot1 == bl) && (tot3 == bl) && (tot5 == bl) && (tot2 == wh) && (tot4 == wh)){
       rechtsom = 123;
   Serial.println("s1 s3 s5 zien zwart");
@@ -306,43 +303,130 @@ if((tot1 == bl) && (tot3 == bl) && (tot5 == bl) && (tot2 == wh) && (tot4 == wh))
         
          }
          
+}*/
+
+//Rechts haaks
+if((tot5 == bl) && (tot2 == wh) && (tot4 == wh)){
+      rechtsom = 123;
+  Serial.println("s1 s3 s5 zien zwart");
+  Serial.println(s6);
+
+  }
+  if ((rechtsom == 123) && (tot6 == wh)){
+         Serial.println("moet nu draaien rechts");
+         //Serial.println(s6);
+         //digitalWrite(8, HIGH);   //Disengage the Brake for Channel B
+         //digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
+         right();
+        
+         if(s1 == bl){
+           Serial.println("na de bocht recht door");
+           rechtsom = 0;             //The car go right
+           return;
+        
+         }
+         
 }
 
 
 //correctie naar de lijn naar rechts
- if((tot3 == bl) && (tot2 == wh) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+ if((tot3 == bl) && (tot2 == wh) && (tot4 == wh) && (tot5 == wh) && (tot1 == wh)){
     Serial.println("gaat naar rechts?");
     rechtscor = 36;
-    delay(20);
+    
   }
   
-  if((tot3 == bl) && (rechtscor == 36) && (tot2 == wh) && (tot4 == wh)){
+  if((tot3 == bl ) && (rechtscor == 36) && (tot2 == wh) && (tot4 == wh)){
      Serial.println("rechtse correctie");
-     analogWrite(11, 255);   //Spins the motor on Channel B at full speed
-     analogWrite(3, 80);    //Spins the motor on Channel A at full speed
-    if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
+     analogWrite(11, 255);   //Spins the motor on Channel B at full speed links
+     analogWrite(3, 1);    //Spins the motor on Channel A at full speed rechts
+    
+    if(s5 == bl){
+     rechtsom = 123;
+     analogWrite(11, 255);
+     analogWrite(3, 255);
+    }
+    if((rechtsom == 123) && (tot6 == wh)){
+     right();
+     if(s1 == bl){
+       Serial.println("Een bocht naar rechts gemaakt");
+       analogWrite(11, 255);
+       analogWrite(3, 255);
+       rechtscor = 0;
+       rechtsom = 0;
+       return;
+     }
+    }
+    if(s1 == bl){
+      rechtscor = 0;
      Serial.println("Heeft nu gecorrigeerd van rechts");
     return;
     }
   }
+   
+   
     
-    
-    //slappe correctie naar links
-    if((tot3 == wh) && (tot2 == bl) && (tot4 == wh) && (tot5 == wh) && (tot6 == bl)){
+    //correctie naar links
+    if((tot3 == wh) && (tot2 == bl) && (tot4 == wh) && (tot5 == wh) && (tot1 == wh)){
       Serial.println("gaat naar links?");
       linkscor = 37;
-      delay(20);
+      
+
     }
     if((tot2 == bl) && (linkscor == 37) && (tot3 == wh) && (tot5 == wh)){
       Serial.println("linkse correctie");
-      analogWrite(11, 80);   //Spins the motor on Channel B at full speed
-      analogWrite(3, 255);    //Spins the motor on Channel A at full speed
-      
-    if((tot1 == bl) && (tot2 == wh) && (tot3 == wh) && (tot5 == wh) && (tot4 == wh)){
-      Serial.println("Heeft nu gecorrigeerd van links");
-      return;
+      analogWrite(11, 1);   //Spins the motor on Channel B at full speed
+      analogWrite(3, 255);    //Spins the motor on Channel A at full speed 
+      if(s1 == bl){
+        linkscor = 0;
+        Serial.println("Heeft nu gecorrigeerd van links");
+        return;
      }
+     
     }
+
+   /*
+   //Rechts haaks
+if((tot5 == bl) && (tot2 == wh) && (tot4 == wh)){
+      rechtsom = 123;
+  Serial.println("s1 s3 s5 zien zwart");
+  Serial.println(s6);
+
+  }
+  if ((rechtsom == 123) && (tot6 == wh)){
+         Serial.println("moet nu draaien rechts");
+         //Serial.println(s6);
+         //digitalWrite(8, HIGH);   //Disengage the Brake for Channel B
+         //digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
+         right();
+        
+         if(s1 == bl){
+           Serial.println("na de bocht recht door");
+           rechtsom = 0;             //The car go right
+           return;
+        
+         }
+         
+}
+   //correctie naar de lijn naar rechts
+ if((tot3 == bl) && (tot2 == wh) && (tot4 == wh) && (tot5 == wh) && (tot1 == wh)){
+    Serial.println("gaat naar rechts?");
+    rechtscor = 36;
+    
+  }
+  
+  if((tot3 == bl ) && (rechtscor == 36) && (tot2 == wh) && (tot4 == wh)){
+     Serial.println("rechtse correctie");
+     analogWrite(11, 255);   //Spins the motor on Channel B at full speed links
+     analogWrite(3, 1);    //Spins the motor on Channel A at full speed rechts
+    if(s1 == bl){
+      rechtscor = 0;
+     Serial.println("Heeft nu gecorrigeerd van rechts");
+    return;
+    }
+  }
+   */
+
     /*
     }
   //scherpe correctie naar links
@@ -384,7 +468,7 @@ if((tot1 == bl) && (tot3 == bl) && (tot5 == bl) && (tot2 == wh) && (tot4 == wh))
     
    
 //links haaks
-if((tot1 == bl) && (tot3 == wh) && (tot5 == wh) && (tot2 == bl) && (tot4 == bl)){
+if((tot1 == bl) && (tot3 == wh) && (tot5 == wh) && (tot4 == bl)){
       linksom = 123;
   Serial.println("s1 s3 s5 zien zwart");
   Serial.println(s6);
@@ -397,7 +481,7 @@ if((tot1 == bl) && (tot3 == wh) && (tot5 == wh) && (tot2 == bl) && (tot4 == bl))
          //digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
          left();
          linksom = 0;                //The car go right
-         if((tot1 == bl)){
+         if((s1 == bl)){
            return;
          }
          
