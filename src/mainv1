@@ -78,8 +78,6 @@ void left() {
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     //analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
     analogWrite(11, 65);
-  
-
 } 
 
  void CheckLineCoordination(){
@@ -163,6 +161,7 @@ void loop(){
   int ls4 = digitalRead(DS4);
   int ls5 = digitalRead(DS5);
   int ls6 = digitalRead(DS6);
+  
 
   Serial.print("tweede");
   Serial.print(ls4);
