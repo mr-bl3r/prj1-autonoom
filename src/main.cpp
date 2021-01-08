@@ -102,8 +102,6 @@ void Scan() {
         irSensorDigital[i] = 1;
     }
     else {irSensorDigital[i] = 0;}
-    Serial.print(irSensorAnalog[i]);
-    Serial.print("|");
     count = count + irSensorDigital[i];
     int b = 5-i;
     irSensors = irSensors + (irSensorDigital[i]<<b);
@@ -184,23 +182,15 @@ void UpdateError() {
        error = 150;
        break;
 
- /* 4 Sensors on the line       
-     case B111100:
+ /* 4 Sensors on the line */      
+     case B11110:           //links af maar met 1 foute lezing error
        error = -150;
        break;
-       
-     case B111010:
-       error = -150;
-       break;
-      
-     case B001111:
+          
+     case B01111:           //rechts af maar met 1 foute lezing error
        error = 150;
        break;
-       
-     case B010111:
-       error = 150;
-       break;
-            */
+                 
 /* 5 Sensors on the line */      
 
      case B11111:
@@ -214,7 +204,7 @@ void UpdateError() {
 }
 
 void UpdateCorrection() {
-
+    Serial.println("correction");
   if (error >= 0 && error < 30) {
     correction = 0;
   }
