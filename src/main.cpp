@@ -4,14 +4,6 @@
 */
 #include <arduino.h>
 
-/* Define motor controll inputs */
-const int motorRPin1 = 2; // signal pin 1 for the right motor, connect to IN1               
-const int motorRPin2 = 3;  // signal pin 2 for the right motor, connect to IN2
-const int motorREnable = 5; // enable pin for the right motor (needs to be PWM enabled)
-
-const int motorLPin1 = 4; // signal pin 1 for the left motor, connect to IN3 (was 5 - need to change)             
-const int motorLPin2 = 7; // signal pin 2 for the left motor, connect to IN4
-const int motorLEnable = 6; // enable pin for the left motor (needs to be PWM enabled)
 
 /* Define the pins for the IR receivers */
 const int irPins[5] = {A8, A9, A10, A11, A12};
@@ -53,17 +45,10 @@ int maxSpeed = 255;
 /* variables to keep track of current speed of motors */
 int motorLSpeed = 0;
 int motorRSpeed = 0;
-
+int s6 = 29;
 void setup() {
     Serial.begin(9600);
-  /* Set up motor controll pins as output */
-  pinMode(motorLPin1,OUTPUT);        
-  pinMode(motorLPin2,OUTPUT);
-  pinMode(motorLEnable,OUTPUT);
   
-  pinMode(motorRPin1,OUTPUT);        
-  pinMode(motorRPin2,OUTPUT);
-  pinMode(motorREnable,OUTPUT);
    
   /* Set-up IR sensor pins as input */
   for (int i = 0; i < 5; i++) {
@@ -84,10 +69,19 @@ void setup() {
   Without the change to wiring.c time functions (millis, delay, as well as libraries using them
   will not work corectly.
   */
-  TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00); 
-  TCCR0B = _BV(CS00); 
+  //TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00); 
+  //TCCR0B = _BV(CS00); 
 }
 
+void MotorLstop(){
+   digitalWrite(9, LOW);   //Disengage the Brake for Channel A
+    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
+
+}
+
+void MotorRstop(){
+ 
+}
 void Scan() {
   // Initialize counters, sums etc.
  
@@ -103,16 +97,16 @@ void Scan() {
     }
     else {irSensorDigital[i] = 0;}
     count = count + irSensorDigital[i];
-    int b = 5-i;
+    int b = 4-i;
     irSensors = irSensors + (irSensorDigital[i]<<b);
-    }    
+    } 
 }
 
 
 void UpdateError() {
   
   errorLast = error;  
-  
+
   switch (irSensors) {
      
     case B00000:
@@ -121,11 +115,11 @@ void UpdateError() {
        break;
      
      case B10000: // leftmost sensor on the line
-       error = -120;
+       error = -150;
        break;
       
      case B01000:
-       error = -60;
+       error = -90;
        break;
 
      case B00100:
@@ -133,11 +127,11 @@ void UpdateError() {
        break;
 
      case B00010:  
-       error = 60;
+       error = 90;
        break;
        
      case B00001: // right most sensor //v2
-       error = 120;
+       error = 150;
        break;           
 
     // case B000001: // rigtmost sensor on the line
@@ -168,8 +162,8 @@ void UpdateError() {
  
      case B00101:           // scherp rechts
        error = 150;
-       break;
-/* 3 Sensors on the line */    
+       break; 
+// 3 Sensors on the line     
        // Als de auto op 2, 1 en 3 staat probeer case B01110
        
      case B11100:
@@ -180,9 +174,10 @@ void UpdateError() {
      //case B00111:
      case B00111:
        error = 150;
+
        break;
 
- /* 4 Sensors on the line */      
+ // 4 Sensors on the line       
      case B11110:           //links af maar met 1 foute lezing error
        error = -150;
        break;
@@ -191,11 +186,22 @@ void UpdateError() {
        error = 150;
        break;
                  
-/* 5 Sensors on the line */      
+// 5 Sensors on the line      
 
      case B11111:
-       interupt = 1; // increment interupts when pause stop line is found
+       //interupt = 1; // increment interupts when pause stop line is found
        error = 0;
+
+       
+       // tijdelijk test voor het stoppen van de motoren
+       //motor stop R 
+      digitalWrite(9, LOW);   
+      digitalWrite(12, HIGH); 
+      // motor L stop
+      digitalWrite(8, LOW);   
+      digitalWrite(13, HIGH); 
+
+       delay(4000);
        break;
    
      default:
@@ -204,7 +210,7 @@ void UpdateError() {
 }
 
 void UpdateCorrection() {
-    Serial.println("correction");
+    //Serial.println(correction);
   if (error >= 0 && error < 30) {
     correction = 0;
   }
@@ -226,6 +232,11 @@ void UpdateCorrection() {
   } 
   
   else if (error >=150 && error < 180) {
+    //hij moet stil staan en draaien in zijn hart
+    while(s6 == 0){
+      digitalRead(s6);
+    }  
+    //motors aanpassen
     correction = 255;
   }   
 
@@ -247,6 +258,7 @@ void UpdateCorrection() {
   
   else if (error <= -90 && error > -120) {
     correction = -55;
+
   }  
   
   else if (error <= -120 && error > -150) {
@@ -254,7 +266,12 @@ void UpdateCorrection() {
   } 
   
   else if (error <= -150 && error > -180) {
-    correction = -255;
+    //hij moet stil staan en draaien in zijn hart
+    while(s6 == 0){
+      digitalRead(s6);
+    }  
+    //motors aanpassen
+    correction = 255;
   }   
 
   else if (error <= -180) {
@@ -262,13 +279,13 @@ void UpdateCorrection() {
   }
   
   if (correction > 0) {
-    motorRSpeed = maxSpeed - correction;
+    motorRSpeed = maxSpeed - correction;          //bvb 255 - 40 = 215 pwm
     motorLSpeed = maxSpeed;
   }
   
   else if (correction < 0) {
     motorRSpeed = maxSpeed;
-    motorLSpeed = maxSpeed + correction;
+    motorLSpeed = maxSpeed + correction;          //bvb 255 +- 40 = 215 pwm
   }
 else if (correction == 0) {
     motorRSpeed = maxSpeed;
@@ -277,6 +294,9 @@ else if (correction == 0) {
 }
 
 void Drive() {
+  Serial.println(motorLSpeed);
+  Serial.print(motorRSpeed);
+  Serial.println(" ");
   if (motorRSpeed > 255) {motorRSpeed = 255;}
   else if (motorRSpeed < -255) {motorRSpeed = -255;}
   
@@ -314,11 +334,7 @@ void Drive() {
   } 
 
 }
-
-
 void loop() {
- 
-
  Scan();
  UpdateError();
  UpdateCorrection();
