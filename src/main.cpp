@@ -82,8 +82,8 @@ void UpdateError() {
   switch (irSensors) {
      //Serial.println(irSensors);
     case B00000:
-       if (errorLast < 0) { error = -180;}
-       else if (errorLast > 0) {error = 180;}
+       if (errorLast < 0) { error = -180;}// hier kunnen we gebruik van maken bij het maken van een bocht rond zn as
+       else if (errorLast > 0) {error = 180;}// we moeten dan wel iets doen met de rest van de code omdat die nu nog door loopt
        break;
      
      case B10000: // leftmost sensor on the line
