@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-#include <Arduino.h>
-
-// Variables will change:
-int ledState = HIGH;         // the current state of the output pi
-int buttonState;             // the current reading from the input pin
-int lastButtonState = LOW;   // the previous reading from the input pin
-int rechtsom = 0;
-int linksom = 0;
-
-#define DS1 22
-#define DS2 24
-#define DS3 26
-#define DS4 28
-#define DS5 30
-#define DS6 32
-
-=======
 /*
 ** Line Follower Basic. 5
 ** gemaakt door de boy Boyds
@@ -24,31 +6,21 @@ int linksom = 0;
 
 /* Define the pins for the IR receivers */
 const int irPins[5] = {A8, A9, A10, A11, A12};
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
 
+/* Define values for the IR Sensor readings */
 
-int delayR = 50;
-int bl = 1;
-int wh = 0;
+// an array to hold values from analogRead on the ir sensor (0-1023)
+int irSensorAnalog[5] = {0,0,0,0,0};
 
-int s1, s2, s3, s4, s5, s6;
-int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
+// an array to hold boolean values (1/0) for the ir sensors, based on the analog read and the predefined treashold
+int irSensorDigital[5] = {0,0,0,0,0}; 
 
-void straight() {
-  Serial.println("Driving straight");
-  //Driving forward
-  //Motor A forward @ full speed
-    digitalWrite(12, HIGH); //Establishes forward direction of Channel A
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
+// the value above which we determine an IR sensor reading indicates the sensor is over a line
+int treashold = 500; 
 
-  //Motor B forward @ full speed
-    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    analogWrite(11, 255);    //Spins the motor on Channel B at full speed
+// binary representation of the sensor reading from left to right
+int irSensors = B00000; 
 
-<<<<<<< HEAD
-=======
 // sensors detecting the line
 int count = 0; 
 
@@ -80,103 +52,18 @@ void setup() {
   for (int i = 0; i < 5; i++) {
     pinMode(irPins[i], INPUT);
   }
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
 }
 
-void right() {
-  Serial.println("Gaat naar rechts");
-  //Driving right
-  //Motor A forward @ full speed forward
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, 200);   //Spins the motor on Channel A at full speed
-
-<<<<<<< HEAD
-  //Motor B forward @ full speed backward
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    analogWrite(11, 200);    //Spins the motor on Channel B at full speed backward
-}
-
-
-void left() {
-  Serial.println("Gaat naar links");
-  //Driving left
-  //Motor A forward @ full speed backward
-    digitalWrite(12, HIGH); //Establishes  direction of Channel A
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed backward
-
-  //Motor B forward @ full speed forward
-    digitalWrite(13, LOW);  //Establishes forward direction of Channel B
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
-}
+void Scan() {
+  // Initialize counters, sums etc.
+ 
+  count = 0;
   
+  irSensors = B00000;
+    
+  for (int i = 0; i < 5; i++) {
+    irSensorAnalog[i] = analogRead(irPins[i]);
 
-
-void stop() {
-  digitalWrite(9, HIGH);
-  digitalWrite(8, HIGH);
-}
-void pause() { 
-  Serial.println("start pauze"); 
-
-}
-
-void setup() {
-  //Setup Channel A
-  pinMode(12, OUTPUT); //Initiates Motor Channel A pin
-  pinMode(9, OUTPUT); //Initiates Brake Channel A pin
-
-  //Setup Channel B
-  pinMode(13, OUTPUT); //Initiates Motor Channel A pi
-  pinMode(8, OUTPUT);  //Initiates Brake Channel A pin
-
-  //Setup sensor
-  pinMode(DS1, INPUT);
-  pinMode(DS2, INPUT);
-  pinMode(DS3, INPUT);
-  pinMode(DS4, INPUT);
-  pinMode(DS5, INPUT);
-  pinMode(DS6, INPUT);
-  
-  Serial.begin(9600); //Starts the serial monitor
-}
-
-void loop(){
-  // assigns signal 1-6 from digital sensor 1-6
-s1 = digitalRead(DS1);
-s2 = digitalRead(DS2);
-s3 = digitalRead(DS3);
-s4 = digitalRead(DS4);
-s5 = digitalRead(DS5);
-s6 = digitalRead(DS6);
-//tijdelijke straight
-
-straight();
- //rechts af
-  if (s5 == bl){//rechter sensor 
-      //1e stap hij moet door rijden totdat sensor 6 wit is
-      s6 = digitalRead(DS6);
-      while (s6 == bl){
-          s6 = digitalRead(DS6);
-          Serial.println("S6");
-      }
-        delay(60);
-        stop();
-        delay(2000);
-        right();
-        //vanaf hier moet hij opzoek naar de lijn en kijken of sensor 1 weer zwart word
-        s1 = digitalRead(DS1);
-        while(s1 == wh){
-          s1 = digitalRead(DS1);
-          Serial.println("S1 wit"); 
-        } 
-          stop();
-          delay(100000); 
-  }
-=======
     if (irSensorAnalog[i] >= treashold) {
         irSensorDigital[i] = 1;
     }
@@ -195,8 +82,8 @@ void UpdateError() {
   switch (irSensors) {
      //Serial.println(irSensors);
     case B00000:
-       if (errorLast < 0) { error = -180;}// hier kunnen we gebruik van maken bij het maken van een bocht rond zn as
-       else if (errorLast > 0) {error = 180;}// we moeten dan wel iets doen met de rest van de code omdat die nu nog door loopt
+       if (errorLast < 0) { error = -180;}
+       else if (errorLast > 0) {error = 180;}
        break;
      
      case B10000: // leftmost sensor on the line
@@ -307,11 +194,11 @@ void UpdateCorrection() {
     correction = 305;
     
   }   
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
 
+  else if (error >=180) {
+    correction = 305;
+  }
 
-<<<<<<< HEAD
-=======
   if (error <= 0 && error > -30) {
     correction = 0;
   }
@@ -336,11 +223,26 @@ void UpdateCorrection() {
     correction = -305;
     
   }   
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
 
+  else if (error <= -180) {
+    correction = -305;
+  }
+  
+  if (correction > 0) {
+    motorRSpeed = maxSpeed - correction;
+    motorLSpeed = maxSpeed;
+  }
+  
+  else if (correction < 0) {
+    motorRSpeed = maxSpeed;
+    motorLSpeed = maxSpeed + correction;
+  }
+else if (correction == 0) {
+    motorRSpeed = maxSpeed;
+    motorLSpeed = maxSpeed;
+  }
+}
 
-<<<<<<< HEAD
-=======
 void Drive() {
   if (motorRSpeed > 255) {motorRSpeed = 255;}
   else if (motorRSpeed < -255) {motorRSpeed = -255;}
@@ -377,31 +279,16 @@ void Drive() {
     digitalWrite(13, LOW); //Establishes reverse direction of Channel A
     analogWrite(11, motorLSpeed);
   } 
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
-
-
-
-  
-  // linker sensor
- if (s4 == bl){//rechter sensor
-      //1e stap hij moet door rijden totdat sensor 6 wit is
-      s6 = digitalRead(DS6);
-      while (s6 == bl){
-          s6 = digitalRead(DS6);
-      }
-        stop();
-        delay(100);
-        right();
-
-<<<<<<< HEAD
-       
-  }
 
 }
-=======
+
+
+void loop() {
+ 
+
  Scan();
  UpdateError();
  UpdateCorrection();
  Drive();
 }
->>>>>>> 651ff7a79f435a871db360ebe2971a50cce22bdf
+
