@@ -1,327 +1,155 @@
-/*
-** Line Follower Basic v. 5
-** gemaakt door de boy Boyds
-*/
-#include <arduino.h>
+#include <Arduino.h>
 
-/* Define motor controll inputs */
-const int motorRPin1 = 2; // signal pin 1 for the right motor, connect to IN1               
-const int motorRPin2 = 3;  // signal pin 2 for the right motor, connect to IN2
-const int motorREnable = 5; // enable pin for the right motor (needs to be PWM enabled)
+// Variables will change:
+int ledState = HIGH;         // the current state of the output pi
+int buttonState;             // the current reading from the input pin
+int lastButtonState = LOW;   // the previous reading from the input pin
+int rechtsom = 0;
+int linksom = 0;
 
-const int motorLPin1 = 4; // signal pin 1 for the left motor, connect to IN3 (was 5 - need to change)             
-const int motorLPin2 = 7; // signal pin 2 for the left motor, connect to IN4
-const int motorLEnable = 6; // enable pin for the left motor (needs to be PWM enabled)
+#define DS1 22
+#define DS2 24
+#define DS3 26
+#define DS4 28
+#define DS5 30
+#define DS6 32
 
-/* Define the pins for the IR receivers */
-const int irPins[5] = {A8, A9, A10, A11, A12};
 
-/* Define values for the IR Sensor readings */
 
-// an array to hold values from analogRead on the ir sensor (0-1023)
-int irSensorAnalog[5] = {0,0,0,0,0};
+int delayR = 50;
+int bl = 1;
+int wh = 0;
 
-// an array to hold boolean values (1/0) for the ir sensors, based on the analog read and the predefined treashold
-int irSensorDigital[5] = {0,0,0,0,0}; 
+int s1, s2, s3, s4, s5, s6;
+int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
 
-// the value above which we determine an IR sensor reading indicates the sensor is over a line
-int treashold = 500; 
+void straight() {
+  Serial.println("Driving straight");
+  //Driving forward
+  //Motor A forward @ full speed
+    digitalWrite(12, HIGH); //Establishes forward direction of Channel A
+    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
+    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
-// binary representation of the sensor reading from left to right
-int irSensors = B00000; 
+  //Motor B forward @ full speed
+    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
+    analogWrite(11, 255);    //Spins the motor on Channel B at full speed
 
-// sensors detecting the line
-int count = 0; 
+}
 
-// a score to determine deviation from the line [-180 ; +180]. Negative means the robot is left of the line.
-int error = 0;
+void right() {
+  Serial.println("Gaat naar rechts");
+  //Driving right
+  //Motor A forward @ full speed forward
+    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
+    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
+    analogWrite(3, 200);   //Spins the motor on Channel A at full speed
 
-//  store the last value of error
-int errorLast = 0;  
+  //Motor B forward @ full speed backward
+    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
+    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+    analogWrite(11, 200);    //Spins the motor on Channel B at full speed backward
+}
 
-// a coorection value, based on the error that is used to change motor speed with PWM
-int correction = 0; 
 
-// keep track of the interupts
-int interupt = 0; 
+void left() {
+  Serial.println("Gaat naar links");
+  //Driving left
+  //Motor A forward @ full speed backward
+    digitalWrite(12, HIGH); //Establishes  direction of Channel A
+    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
+    analogWrite(3, 255);   //Spins the motor on Channel A at full speed backward
 
-/* Set up maximum speed and speed for turning (to be used with PWM) */
+  //Motor B forward @ full speed forward
+    digitalWrite(13, LOW);  //Establishes forward direction of Channel B
+    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
+    analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
+}
+  
 
-// PWM to control motor speed [0 - 255]
-int maxSpeed = 255; 
 
-/* variables to keep track of current speed of motors */
-int motorLSpeed = 0;
-int motorRSpeed = 0;
+void stop() {
+  digitalWrite(9, HIGH);
+  digitalWrite(8, HIGH);
+}
+void pause() { 
+  Serial.println("start pauze"); 
+
+}
 
 void setup() {
-    Serial.begin(9600);
-  /* Set up motor controll pins as output */
-  pinMode(motorLPin1,OUTPUT);        
-  pinMode(motorLPin2,OUTPUT);
-  pinMode(motorLEnable,OUTPUT);
+  //Setup Channel A
+  pinMode(12, OUTPUT); //Initiates Motor Channel A pin
+  pinMode(9, OUTPUT); //Initiates Brake Channel A pin
+
+  //Setup Channel B
+  pinMode(13, OUTPUT); //Initiates Motor Channel A pi
+  pinMode(8, OUTPUT);  //Initiates Brake Channel A pin
+
+  //Setup sensor
+  pinMode(DS1, INPUT);
+  pinMode(DS2, INPUT);
+  pinMode(DS3, INPUT);
+  pinMode(DS4, INPUT);
+  pinMode(DS5, INPUT);
+  pinMode(DS6, INPUT);
   
-  pinMode(motorRPin1,OUTPUT);        
-  pinMode(motorRPin2,OUTPUT);
-  pinMode(motorREnable,OUTPUT);
-   
-  /* Set-up IR sensor pins as input */
-  for (int i = 0; i < 5; i++) {
-    pinMode(irPins[i], INPUT);
+  Serial.begin(9600); //Starts the serial monitor
+}
+
+void loop(){
+  // assigns signal 1-6 from digital sensor 1-6
+s1 = digitalRead(DS1);
+s2 = digitalRead(DS2);
+s3 = digitalRead(DS3);
+s4 = digitalRead(DS4);
+s5 = digitalRead(DS5);
+s6 = digitalRead(DS6);
+//tijdelijke straight
+
+straight();
+ //rechts af
+  if (s5 == bl){//rechter sensor 
+      //1e stap hij moet door rijden totdat sensor 6 wit is
+      s6 = digitalRead(DS6);
+      while (s6 == bl){
+          s6 = digitalRead(DS6);
+          Serial.println("S6");
+      }
+        delay(60);
+        stop();
+        delay(2000);
+        right();
+        //vanaf hier moet hij opzoek naar de lijn en kijken of sensor 1 weer zwart word
+        s1 = digitalRead(DS1);
+        while(s1 == wh){
+          s1 = digitalRead(DS1);
+          Serial.println("S1 wit"); 
+        } 
+          stop();
+          delay(100000); 
   }
-  
-  /* Change the PWM frequency of digital pins 5 and 6 (timer0) to Phase-correct PWM of 31.250 kHz
-  from the default of ~500Hz. Using code from Adjusting PWM Frequencies
-  http://playground.arduino.cc/Main/TimerPWMCheatsheet
-  
-  This requires a separate change in the wiring.c function in the Arduino program files 
-  hardware\arduino\cores\arduino\wiring.c from:
-  #define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
-  
-  to:
-  #define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(1 * 510))
-  
-  Without the change to wiring.c time functions (millis, delay, as well as libraries using them
-  will not work corectly.
-  */
-  TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00); 
-  TCCR0B = _BV(CS00); 
-}
-
-void Scan() {
-  // Initialize counters, sums etc.
- 
-  count = 0;
-  
-  irSensors = B00000;
-    
-  for (int i = 0; i < 5; i++) {
-    irSensorAnalog[i] = analogRead(irPins[i]);
-
-    if (irSensorAnalog[i] >= treashold) {
-        irSensorDigital[i] = 1;
-    }
-    else {irSensorDigital[i] = 0;}
-    count = count + irSensorDigital[i];
-    int b = 5-i;
-    irSensors = irSensors + (irSensorDigital[i]<<b);
-    }    
-}
 
 
-void UpdateError() {
-  
-  errorLast = error;  
-  
-  switch (irSensors) {
-     
-    case B00000:
-       if (errorLast < 0) { error = -180;}
-       else if (errorLast > 0) {error = 180;}
-       break;
-     
-     case B10000: // leftmost sensor on the line
-       error = -120;
-       break;
-      
-     case B01000:
-       error = -60;
-       break;
 
-     case B00100:
-       error = 0; 
-       break;
 
-     case B00010:  
-       error = 60;
-       break;
+
+
+
+  
+  // linker sensor
+ if (s4 == bl){//rechter sensor
+      //1e stap hij moet door rijden totdat sensor 6 wit is
+      s6 = digitalRead(DS6);
+      while (s6 == bl){
+          s6 = digitalRead(DS6);
+      }
+        stop();
+        delay(100);
+        right();
+
        
-     case B00001: // right most sensor //v2
-       error = 120;
-       break;           
-
-    // case B000001: // rigtmost sensor on the line
-     //  error = 150;
-    //   break;
-       
-/* 2 Sensors on the line */         
-     
-     case B11000:
-       error = -120;
-       break;
-      
-     case B01100:           // licht links
-       error = -60;
-       break;
-
-     case B00110:           // licht rechts
-       error = 60;
-       break;
-
-     case B00011: 
-       error = 120;
-       break;           
-     
-     case B10100:           //scherp links
-        error = -150;
-        break; 
- 
-     case B00101:           // scherp rechts
-       error = 150;
-       break;
-/* 3 Sensors on the line */    
-       // Als de auto op 2, 1 en 3 staat probeer case B01110
-       
-     case B11100:
-     //case B01110:
-       error = -150;
-       break;
-      
-     //case B00111:
-     case B00111:
-       error = 150;
-       break;
-
- /* 4 Sensors on the line */      
-     case B11110:           //links af maar met 1 foute lezing error
-       error = -150;
-       break;
-          
-     case B01111:           //rechts af maar met 1 foute lezing error
-       error = 150;
-       break;
-                 
-/* 5 Sensors on the line */      
-
-     case B11111:
-       interupt = 1; // increment interupts when pause stop line is found
-       error = 0;
-       break;
-   
-     default:
-     error = errorLast;
   }
-}
-
-void UpdateCorrection() {
-    Serial.println("correction");
-  if (error >= 0 && error < 30) {
-    correction = 0;
-  }
-  
-  else if (error >=30 && error < 60) {
-    correction = 15;
-  }
-  
-  else if (error >=60 && error < 90) {
-    correction = 40;
-  }
-  
-  else if (error >=90 && error < 120) {
-    correction = 55;
-  }  
-  
-  else if (error >=120 && error < 150) {
-    correction = 75;
-  } 
-  
-  else if (error >=150 && error < 180) {
-    correction = 255;
-  }   
-
-  else if (error >=180) {
-    correction = 305;
-  }
-
-  if (error <= 0 && error > -30) {
-    correction = 0;
-  }
-  
-  else if (error <= -30 && error > -60) {
-    correction = -15;
-  }
-  
-  else if (error <= -60 && error > -90) {
-    correction = -40;
-  }
-  
-  else if (error <= -90 && error > -120) {
-    correction = -55;
-  }  
-  
-  else if (error <= -120 && error > -150) {
-    correction = -75;
-  } 
-  
-  else if (error <= -150 && error > -180) {
-    correction = -255;
-  }   
-
-  else if (error <= -180) {
-    correction = -305;
-  }
-  
-  if (correction > 0) {
-    motorRSpeed = maxSpeed - correction;
-    motorLSpeed = maxSpeed;
-  }
-  
-  else if (correction < 0) {
-    motorRSpeed = maxSpeed;
-    motorLSpeed = maxSpeed + correction;
-  }
-else if (correction == 0) {
-    motorRSpeed = maxSpeed;
-    motorLSpeed = maxSpeed;
-  }
-}
-
-void Drive() {
-  if (motorRSpeed > 255) {motorRSpeed = 255;}
-  else if (motorRSpeed < -255) {motorRSpeed = -255;}
-  
-  if (motorLSpeed > 255) {motorLSpeed = 255;}
-  else if (motorLSpeed < -255) {motorLSpeed = -255;}
-  
-  if (motorRSpeed > 0) { // right motor forward (using PWM)
-     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(12, HIGH); //Establishes fwd direction of Channel A
-    analogWrite(3, motorRSpeed);
-  } 
-  
-  else if (motorRSpeed < 0) {// right motor reverse (using PWM)
-     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, motorRSpeed);
-  } 
-  
-  else if (motorRSpeed == 0) { // right motor fast stop
-     digitalWrite(9, HIGH);   //Disengage the Brake for Channel A
-    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, 0);
-  }
-  
-  if (motorLSpeed >= 0) { // left motor forward (using PWM)
-     digitalWrite(8, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(13, HIGH); //Establishes fwd direction of Channel A
-    analogWrite(11, motorRSpeed);
-  } 
-  
-  else if (motorLSpeed < 0) { // left motor reverse (using PWM)
-     digitalWrite(8, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(13, LOW); //Establishes reverse direction of Channel A
-    analogWrite(11, motorRSpeed);
-  } 
 
 }
-
-
-void loop() {
- 
-
- Scan();
- UpdateError();
- UpdateCorrection();
- Drive();
-}
-
