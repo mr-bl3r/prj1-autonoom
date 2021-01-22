@@ -17,6 +17,7 @@ int linksom = 0;
 int delayR = 50;
 int bl = 1;
 int wh = 0;
+int DRD = 10;       //Doorrijdelay
 
 int s1, s2, s3, s4, s5, s6;
 int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
@@ -113,10 +114,9 @@ straight();
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
-          Serial.println("S6 is zwart");
+          Serial.println("S6 is zwart rechtsom");
       }
        Serial.println("S6 is wit");
-        delay(90);
         stop();
         delay(2000);
         right();
@@ -127,29 +127,60 @@ straight();
           Serial.println("S1 wit"); 
         } 
         Serial.println("S1 zwart");
-          stop();
-          delay(4000); 
+        stop();
+        delay(400); //deze delay weg als het draaien werkt
   }
 
-
-
-
-
-
-
-  
-  // linker sensor
+  // linker af
  if (s4 == bl){//rechter sensor
       //1e stap hij moet door rijden totdat sensor 6 wit is
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
+          Serial.println("S6 is zwart linksom");
       }
-        stop();
-        delay(100);
-        right();
-
-       
+      Serial.println("S6 is wit");
+      stop();
+      delay(2000);
+      left();
+      //vanaf hier zoek hij weer de lijn
+      s1 = digitalRead(DS1);
+      while(s1 == wh){
+        s1 = digitalRead(DS1);
+        Serial.println("S1 wit");
+      }
+      Serial.println("S1 zwart");
+      stop();
+      delay(400); //deze delay weg als het draaien werkt
   }
 
-}
+
+
+ //correctie links
+
+    if(s2 == bl){
+      
+      analogWrite(3, 255);     //Spins the motor on Channel A at full speed 
+      digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
+    
+      analogWrite(11, 20);     //Spins the motor on Channel B at full speed forward
+      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+       
+       
+    }
+
+//correctie rechts
+
+    if(s3 == bl){
+      analogWrite(3, 20);     //Spins the motor on Channel A at full speed 
+      digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
+    
+      analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
+      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+      
+      }
+    }
+
+
+
+
