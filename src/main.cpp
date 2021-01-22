@@ -14,8 +14,6 @@ int linksom = 0;
 #define DS5 30
 #define DS6 32
 
-
-
 int delayR = 50;
 int bl = 1;
 int wh = 0;
@@ -44,12 +42,12 @@ void right() {
   //Motor A forward @ full speed forward
     digitalWrite(9, LOW);   //Disengage the Brake for Channel A
     digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, 200);   //Spins the motor on Channel A at full speed
+    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
 
   //Motor B forward @ full speed backward
     digitalWrite(8, LOW);   //Disengage the Brake for Channel B
     digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    analogWrite(11, 200);    //Spins the motor on Channel B at full speed backward
+    analogWrite(11, 255);    //Spins the motor on Channel B at full speed backward
 }
 
 
@@ -115,9 +113,10 @@ straight();
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
-          Serial.println("S6");
+          Serial.println("S6 is zwart");
       }
-        delay(60);
+       Serial.println("S6 is wit");
+        delay(90);
         stop();
         delay(2000);
         right();
@@ -127,8 +126,9 @@ straight();
           s1 = digitalRead(DS1);
           Serial.println("S1 wit"); 
         } 
+        Serial.println("S1 zwart");
           stop();
-          delay(100000); 
+          delay(4000); 
   }
 
 
