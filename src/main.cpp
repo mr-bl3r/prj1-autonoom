@@ -19,6 +19,8 @@ int bl = 1;
 int wh = 0;
 int DRD = 10;       //Doorrijdelay
 
+
+
 int s1, s2, s3, s4, s5, s6;
 int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
 
@@ -105,6 +107,7 @@ s3 = digitalRead(DS3);
 s4 = digitalRead(DS4);
 s5 = digitalRead(DS5);
 s6 = digitalRead(DS6);
+
 //tijdelijke straight
 
 straight();
@@ -177,7 +180,6 @@ straight();
     
       analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
       digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-      
       }
     }
 
