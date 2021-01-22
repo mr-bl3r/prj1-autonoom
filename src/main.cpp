@@ -111,13 +111,28 @@ s6 = digitalRead(DS6);
 //tijdelijke straight
 
 straight();
+
  //rechts af
   if (s5 == bl){//rechter sensor 
+  delay(1);
+  s2 = digitalRead(DS2);
+  s3 = digitalRead(DS3);
+  if ((s2 == bl) && (s3 == bl)){
+  straight();
+   delay(350);
+      stop();
+      delay(5500);
+    
+      
+  }
+  
+  else {
       //1e stap hij moet door rijden totdat sensor 6 wit is
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
           Serial.println("S6 is zwart rechtsom");
+          straight();
       }
        Serial.println("S6 is wit");
         stop();
@@ -131,16 +146,32 @@ straight();
         } 
         Serial.println("S1 zwart");
         stop();
-        delay(400); //deze delay weg als het draaien werkt
+     
+  }
   }
 
-  // linker af
+  // links af
  if (s4 == bl){//rechter sensor
+
+  delay(1);
+  s2 = digitalRead(DS2);
+  s3 = digitalRead(DS3);
+ if  ((s2 == bl) && (s3 == bl))
+ { 
+   straight();
+   delay(350);
+   stop();
+   delay(5500);
+      
+ }
+
+ else{
       //1e stap hij moet door rijden totdat sensor 6 wit is
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
           Serial.println("S6 is zwart linksom");
+          straight();
       }
       Serial.println("S6 is wit");
       stop();
@@ -154,9 +185,9 @@ straight();
       }
       Serial.println("S1 zwart");
       stop();
-      delay(400); //deze delay weg als het draaien werkt
+  
   }
-
+ }
 
 
  //correctie links
