@@ -18,8 +18,8 @@ int delayR = 50;
 int bl = 1;
 int wh = 0;
 int DRD = 10;       //Doorrijdelay
-
-
+int start = 0;
+int stopen = 0;
 
 int s1, s2, s3, s4, s5, s6;
 int Ls1, Ls2, Ls3, Ls4, Ls5, Ls6;
@@ -79,6 +79,25 @@ void pause() {
 
 }
 
+//start functie hij begint niet zonder dat dit waar is 
+void Start(){
+  stop();
+  while(start == 0){
+s1 = digitalRead(DS1);
+s2 = digitalRead(DS2);
+s3 = digitalRead(DS3);
+s4 = digitalRead(DS4);
+s5 = digitalRead(DS5);
+s6 = digitalRead(DS6);
+    if ((s2 == bl) && (s3 == bl) && (s1 == bl) && (s4 == wh) && (s5 == wh)){
+      start = 1;
+    }
+    else{
+     Serial.println("hij wacht op de start");
+     delay(10);
+    }
+  }
+}
 void setup() {
   //Setup Channel A
   pinMode(12, OUTPUT); //Initiates Motor Channel A pin
@@ -97,6 +116,11 @@ void setup() {
   pinMode(DS6, INPUT);
   
   Serial.begin(9600); //Starts the serial monitor
+
+
+Start();
+
+
 }
 
 void loop(){
@@ -112,31 +136,22 @@ s6 = digitalRead(DS6);
 
 straight();
 
+
+
+
+
+
  //rechts af
   if (s5 == bl){//rechter sensor 
-  delay(1);
-  s2 = digitalRead(DS2);
-  s3 = digitalRead(DS3);
-  if ((s2 == bl) && (s3 == bl)){
-  straight();
-   delay(350);
-      stop();
-      delay(5500);
-    
-      
-  }
-  
-  else {
       //1e stap hij moet door rijden totdat sensor 6 wit is
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
           Serial.println("S6 is zwart rechtsom");
-          straight();
       }
        Serial.println("S6 is wit");
         stop();
-        delay(2000);
+        delay(200);
         right();
         //vanaf hier moet hij opzoek naar de lijn en kijken of sensor 1 weer zwart word
         s1 = digitalRead(DS1);
@@ -146,36 +161,24 @@ straight();
         } 
         Serial.println("S1 zwart");
         stop();
-     
-  }
   }
 
-  // links af
+
+
+
+
+
+  // linker af
  if (s4 == bl){//rechter sensor
-
-  delay(1);
-  s2 = digitalRead(DS2);
-  s3 = digitalRead(DS3);
- if  ((s2 == bl) && (s3 == bl))
- { 
-   straight();
-   delay(350);
-   stop();
-   delay(5500);
-      
- }
-
- else{
       //1e stap hij moet door rijden totdat sensor 6 wit is
       s6 = digitalRead(DS6);
       while (s6 == bl){
           s6 = digitalRead(DS6);
           Serial.println("S6 is zwart linksom");
-          straight();
       }
       Serial.println("S6 is wit");
       stop();
-      delay(2000);
+      delay(200);
       left();
       //vanaf hier zoek hij weer de lijn
       s1 = digitalRead(DS1);
@@ -185,9 +188,8 @@ straight();
       }
       Serial.println("S1 zwart");
       stop();
-  
   }
- }
+
 
 
  //correctie links
@@ -210,10 +212,10 @@ straight();
       digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
     
       analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
-      digitalWrite(13, HIGH);  //Establishes forward direction of motor B
+      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
       }
-    }
+}
 
 
 
-
+// stop symbol
