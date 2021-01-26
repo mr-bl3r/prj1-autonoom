@@ -210,7 +210,7 @@ straight();
       digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
     
       analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
-      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
+      digitalWrite(13, HIGH);  //Establishes forward direction of motor B
       }
     }
 
