@@ -12,4 +12,8 @@ The power is supplied by a 3s lipo battery, this battery is turned down to 8.5v 
 
 The robot is commisioned by Fontys Mechatronica in the Netherlands.
 
+En vergeet niet, Denk Groter!
+
+Groetjes van de hogere jaars ;)
+
 
