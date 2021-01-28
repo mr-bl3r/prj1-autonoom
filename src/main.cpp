@@ -9,8 +9,8 @@ int linksom = 0;
 int stopcount = 0;
 
 const int rgbLedPinRed = 47;                         // rgb led red
-const int rgbLedPinGreen = 46;                      // rgb led green
-const int rgbLedPinBlue = 45;                       // rgb led blue
+const int rgbLedPinGreen = 45;                      // rgb led green
+const int rgbLedPinBlue = 46;                       // rgb led blue
 
 #define DS1 22
 #define DS2 24
@@ -174,6 +174,7 @@ straight();
     Serial.println("pauze");
       delay(350);
       stop();
+      blue();
       delay(5100);
     s6 = digitalRead(DS6);
     s5 = digitalRead(DS5);
@@ -233,6 +234,7 @@ straight();
       Serial.println("pauze");
       delay(350);
       stop();
+      blue();
       delay(5100);
       s6 = digitalRead(DS6);
       s5 = digitalRead(DS5);
@@ -291,10 +293,16 @@ while(s1 == bl){
 while (stopcount == 1)
 {
   stop();
-  red();
   Serial.println("hij is aan het einde van het traject");
 }
 }
+    s6 = digitalRead(DS6);
+    s5 = digitalRead(DS5);
+    s4 = digitalRead(DS4);
+    s3 = digitalRead(DS3);
+    s2 = digitalRead(DS2);
+    s1 = digitalRead(DS1);
+
 
 
  //correctie links
