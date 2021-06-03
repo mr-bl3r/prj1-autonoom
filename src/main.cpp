@@ -1,23 +1,54 @@
 #include <Arduino.h>
 
+/*
+void directionControl() {
+    // Set motors to maximum speed
+    // For PWM maximum possible values are 0 to 255
+    analogWrite(enA, 255);
+    analogWrite(enB, 255);
+
+    // Turn on motor A & B
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    delay(2000);
+
+    // Now change motor directions
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    delay(2000);
+
+    // Turn off motors
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, LOW);
+}
+*/
 // Variables will change:
-int ledState = HIGH;         // the current state of the output pi
+int ledState = HIGH;         // the current state of the output pin
 int buttonState;             // the current reading from the input pin
 int lastButtonState = LOW;   // the previous reading from the input pin
 int rechtsom = 0;
 int linksom = 0;
 int stopcount = 0;
-
+const int motorA = 11;
+const int motorAA = 12;
+const int motorB =13;
+const int motorBB = 14;
 const int rgbLedPinRed = 47;                         // rgb led red
 const int rgbLedPinGreen = 45;                      // rgb led green
 const int rgbLedPinBlue = 46;                       // rgb led blue
 
-#define DS1 22
-#define DS2 24
-#define DS3 26
-#define DS4 28
-#define DS5 30
-#define DS6 32
+#define DS1 50
+#define DS2 49
+#define DS3 51
+#define DS4 52
+#define DS5 48
+#define DS6 53
 
 int bl = 1;
 int wh = 0;
@@ -43,55 +74,47 @@ void blue(){
 
 void straight() {
   Serial.println("Driving straight");
-  green();
   //Driving forward
-  //Motor A forward @ full speed
-    digitalWrite(12, HIGH); //Establishes forward direction of Channel A
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
-
-  //Motor B forward @ full speed
-    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    analogWrite(11, 255);    //Spins the motor on Channel B at full speed
-    digitalWrite(rgbLedPinGreen, LOW);
+  
+    digitalWrite(motorA, HIGH); 
+    digitalWrite(motorAA, LOW);   
+    
+    digitalWrite(motorB, HIGH); 
+    digitalWrite(motorBB, LOW);  
 }
 
 void right() {
   Serial.println("Gaat naar rechts");
   //Driving right
   //Motor A forward @ full speed forward
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    digitalWrite(12, LOW); //Establishes reverse direction of Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed
+     digitalWrite(motorA, HIGH); 
+    digitalWrite(motorAA, LOW);   
+    
+    digitalWrite(motorB, LOW); 
+    digitalWrite(motorBB, HIGH);  
 
-  //Motor B forward @ full speed backward
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    analogWrite(11, 255);    //Spins the motor on Channel B at full speed backward
 }
 
 
 void left() {
   Serial.println("Gaat naar links");
   //Driving left
-  //Motor A forward @ full speed backward
-    digitalWrite(12, HIGH); //Establishes  direction of Channel A
-    digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-    analogWrite(3, 255);   //Spins the motor on Channel A at full speed backward
+    digitalWrite(motorA, LOW); 
+    digitalWrite(motorAA, HIGH);   
+    
+    digitalWrite(motorB, HIGH); 
+    digitalWrite(motorBB, LOW);  
 
-  //Motor B forward @ full speed forward
-    digitalWrite(13, LOW);  //Establishes forward direction of Channel B
-    digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-    analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
 }
   
 
 
 void stop() {
   red();
-  digitalWrite(9, HIGH);
-  digitalWrite(8, HIGH);
+    digitalWrite(motorA, LOW); 
+    digitalWrite(motorAA, LOW);   
+    digitalWrite(motorB, LOW); 
+    digitalWrite(motorBB, LOW);  
 }
 
 //start functie hij begint niet zonder dat dit waar is 
@@ -118,12 +141,10 @@ s6 = digitalRead(DS6);
 
 void setup() {
   //Setup Channel A
-  pinMode(12, OUTPUT); //Initiates Motor Channel A pin
-  pinMode(9, OUTPUT); //Initiates Brake Channel A pin
-
-  //Setup Channel B
-  pinMode(13, OUTPUT); //Initiates Motor Channel A pi
-  pinMode(8, OUTPUT);  //Initiates Brake Channel A pin
+  pinMode(11, OUTPUT); 
+  pinMode(12, OUTPUT); 
+  pinMode(13, OUTPUT); 
+  pinMode(14, OUTPUT);  
 
   //Setup sensor
   pinMode(DS1, INPUT);
@@ -308,20 +329,19 @@ while (stopcount == 1)
  //correctie links
 
     if(s2 == bl){
-      analogWrite(3, 255);     //Spins the motor on Channel A at full speed 
-      digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
-
-      analogWrite(11, 20);     //Spins the motor on Channel B at full speed forward
-      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-    }
+    digitalWrite(motorA, LOW); 
+    digitalWrite(motorAA, HIGH);   
+    
+    digitalWrite(motorB, HIGH); 
+    digitalWrite(motorBB, LOW);  
 
 //correctie rechts
 
     if(s3 == bl){
-      analogWrite(3, 20);     //Spins the motor on Channel A at full speed 
-      digitalWrite(12, HIGH);  //Establishes forward direction of Channel A
+    digitalWrite(motorA, HIGH); 
+    digitalWrite(motorAA, LOW);   
     
-      analogWrite(11, 255);     //Spins the motor on Channel B at full speed forward
-      digitalWrite(13, HIGH);  //Establishes forward direction of Channel B
-      }
+    digitalWrite(motorB, LOW); 
+    digitalWrite(motorBB, HIGH);  
+}
 }
