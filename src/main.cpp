@@ -35,10 +35,10 @@ int lastButtonState = LOW;   // the previous reading from the input pin
 int rechtsom = 0;
 int linksom = 0;
 int stopcount = 0;
-const int motorA = 11;
-const int motorAA = 12;
-const int motorB =13;
-const int motorBB = 14;
+const int motorA = 19;
+const int motorAA = 18;
+const int motorB =21;
+const int motorBB = 20;
 const int rgbLedPinRed = 47;                         // rgb led red
 const int rgbLedPinGreen = 45;                      // rgb led green
 const int rgbLedPinBlue = 46;                       // rgb led blue
@@ -78,9 +78,10 @@ void straight() {
   
     digitalWrite(motorA, HIGH); 
     digitalWrite(motorAA, LOW);   
-    
+    analogWrite(45, 255);
     digitalWrite(motorB, HIGH); 
     digitalWrite(motorBB, LOW);  
+    analogWrite(46, 255);
 }
 
 void right() {
@@ -89,10 +90,10 @@ void right() {
   //Motor A forward @ full speed forward
      digitalWrite(motorA, HIGH); 
     digitalWrite(motorAA, LOW);   
-    
+    analogWrite(45, 255);
     digitalWrite(motorB, LOW); 
     digitalWrite(motorBB, HIGH);  
-
+    analogWrite(46, 255);
 }
 
 
@@ -101,10 +102,10 @@ void left() {
   //Driving left
     digitalWrite(motorA, LOW); 
     digitalWrite(motorAA, HIGH);   
-    
+    analogWrite(45, 255);
     digitalWrite(motorB, HIGH); 
     digitalWrite(motorBB, LOW);  
-
+    analogWrite(46, 255);
 }
   
 
@@ -140,11 +141,12 @@ s6 = digitalRead(DS6);
 
 
 void setup() {
+  Serial.begin(9600);
   //Setup Channel A
-  pinMode(11, OUTPUT); 
-  pinMode(12, OUTPUT); 
-  pinMode(13, OUTPUT); 
-  pinMode(14, OUTPUT);  
+  pinMode(motorA, OUTPUT); 
+  pinMode(motorAA, OUTPUT); 
+  pinMode(motorB, OUTPUT); 
+  pinMode(motorBB, OUTPUT);  
 
   //Setup sensor
   pinMode(DS1, INPUT);
@@ -331,17 +333,19 @@ while (stopcount == 1)
     if(s2 == bl){
     digitalWrite(motorA, LOW); 
     digitalWrite(motorAA, HIGH);   
-    
+    analogWrite(45, 255);
     digitalWrite(motorB, HIGH); 
     digitalWrite(motorBB, LOW);  
-
+    analogWrite(46, 20);
 //correctie rechts
 
     if(s3 == bl){
     digitalWrite(motorA, HIGH); 
     digitalWrite(motorAA, LOW);   
-    
+    analogWrite(45, 20);
     digitalWrite(motorB, LOW); 
     digitalWrite(motorBB, HIGH);  
+    analogWrite(3, 255);
+}
 }
 }
